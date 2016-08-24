@@ -1,34 +1,36 @@
 package main
 
 import (
-	"flag"
 	"strconv"
 	"time"
 
 	"github.com/kidoman/embd"
-	_ "github.com/kidoman/embd/host/all"
+	_ "github.com/kidoman/embd/host/rpi"
 )
 
 func main() {
-	flag.Parse()
-
 	if err := embd.InitGPIO(); err != nil {
 		panic(err)
 	}
 	defer embd.CloseGPIO()
 
-	for i := 0; i < 10; i++ {
+	for i := 9; i >= 0; i-- {
 		for gpioPin, isEnabled := range gpioLayoutFor(strconv.Itoa(i)) {
 
-			embd.SetDirection(gpioPin, embd.Out)
+			if err := embd.SetDirection(gpioPin, embd.Out); err != nil {
+				panic(err)
+			}
 
 			if isEnabled == 1 {
-				embd.DigitalWrite(gpioPin, embd.High)
+				if err := embd.DigitalWrite(gpioPin, embd.High); err != nil {
+					panic(err)
+				}
 			} else {
-				embd.DigitalWrite(gpioPin, embd.Low)
+				if err := embd.DigitalWrite(gpioPin, embd.Low); err != nil {
+					panic(err)
+				}
 			}
 		}
-
 		time.Sleep(1 * time.Second)
 	}
 }
