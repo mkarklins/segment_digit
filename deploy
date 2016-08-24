@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo "Building Go package..."
+env GOOS=linux GOARCH=arm GOARM=7 go build main.go
+echo "Deploying to PI..."
+rsync ./main pi@192.168.1.46:SegmentDigit/
+echo "Done"
